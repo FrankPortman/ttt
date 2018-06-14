@@ -99,7 +99,12 @@ class Board(object):
                antidiag_scorer()
 
     def move(self, player, row, col):
-        self.board[row][col] = player
+        if self.board[row][col] is None:
+            self.board[row][col] = player
+            return True
+        else:
+            print('That position is already marked!  Please pick again.')
+            return False
 
     def get_board_state(self):
         for r,c in product(range(self.n), range(self.n)):
@@ -143,8 +148,9 @@ class Game(object):
         return self.players[self.turn % 2]
 
     def move(self, row, col):
-        self.board.move(self.current, row, col)
-        self.turn += 1
+        result = self.board.move(self.current, row, col)
+        if result: # only change turn if marker placement successful
+            self.turn += 1
 
     def _undo(self, row, col):
         self.board.board[row][col] = None
